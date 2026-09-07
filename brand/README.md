@@ -1,31 +1,33 @@
 # Brand source files
 
-Original logo and favicon art. Keep the originals here — export sized copies
-for the store, don't overwrite these.
+Originals and the exports made from them. Keep the originals — export new
+sized copies rather than overwriting anything here.
+
+## Use these
 
 | File | What it is | Notes |
 |---|---|---|
+| `getbugd_favicon.svg` | **The favicon master.** Bug mark alone, square | 200×200 viewBox, vector, scales to any size |
+| `getbugd_favicon_512.png` | **The favicon to upload.** 512×512 | Transparent corners (RGBA), rendered from the SVG above |
 | `Get.png` | Logo — round "GetBug'd" badge, bug over mint with a heavy black ring | 2000×2000 PNG, **no transparency** (solid mint square behind the circle) |
-| `getbugd_favicon_thicker_compact_version.svg` | Favicon artwork — the bug mark alone, thicker lines, no wordmark | Vector. Contains a `<g id="bugmark">` group (200×200) — that group is the real asset; export it on its own to make the favicon |
-| `getbugd_favicon_thicker_compact_version.png` | Preview of the same mark at 200px / 80px / 32px | 2240×1188. A proof sheet, not the icon — it has the size labels baked in |
 
-All three made 2026-09-07.
+## Originals kept for reference
 
-**Both favicon files are the three-up proof sheet, not a ready icon.** Uploading
-either one to Shopify gives a wide strip with "200px 80px 32px — favicon"
-written on it. The favicon still has to be exported square from the `#bugmark`
-group in the SVG.
+| File | What it is | Notes |
+|---|---|---|
+| `getbugd_favicon_thicker_compact_version.svg` | Where the favicon came from — a proof sheet of the mark at three sizes | The `<g id="bugmark">` group in here is what `getbugd_favicon.svg` was lifted from |
+| `getbugd_favicon_thicker_compact_version.png` | Preview of the mark at 200px / 80px / 32px | 2240×1188. **Not an icon** — the size labels are baked into the image |
+
+All art made 2026-09-07.
 
 Mark colors: mint `#A6F0C6` disc, green `#17A94E` body, olive `#6B7A46` head,
 black outline.
 
 ## Open items
 
-- **Export the actual favicon** — square, from `#bugmark`. 512×512 PNG covers
-  Shopify; the SVG stays the master.
 - **No mascot file yet.** Mascot #1 (the named roly-poly) is decided but not
-  drawn. The bug in the logo is a generic bug, not the mascot. See the
-  Decisions Log in `getbugd-internal`.
+  drawn. The bug in the logo and favicon is a generic bug, not the mascot. See
+  the Decisions Log in `getbugd-internal`.
 - **No vector for the full logo.** `Get.png` is pixels only, so the wordmark
   badge can't scale up clean for stickers or packaging. Only the bug mark is vector.
 - **No transparent version of the logo.** Needed before it can sit on a wheat
