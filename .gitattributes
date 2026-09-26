@@ -1,1 +1,12 @@
 * text=auto eol=lf
+
+*.stl   -text
+*.3mf   -text
+*.gcode -text
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.ico   binary
+*.pdf   binary
+*.zip   binary
