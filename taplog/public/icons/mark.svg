@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="getbugd bug mark">
+  <title>getbugd bug mark</title>
+  <circle cx="100" cy="100" r="92" fill="#A6F0C6" stroke="#000" stroke-width="15"/>
+  <path d="M74 58 L86 78 M126 58 L114 78" stroke="#000" stroke-width="11" stroke-linecap="round" fill="none"/>
+  <path d="M56 92 L74 100 M56 140 L76 130 M144 92 L126 100 M144 140 L124 130" stroke="#000" stroke-width="11" stroke-linecap="round" fill="none"/>
+  <ellipse cx="100" cy="80" rx="27" ry="17" fill="#6B7A46" stroke="#000" stroke-width="9"/>
+  <circle cx="100" cy="122" r="36" fill="#17A94E" stroke="#000" stroke-width="9"/>
+  <path d="M100 88 L100 156" stroke="#000" stroke-width="9" stroke-linecap="round"/>
+</svg>
