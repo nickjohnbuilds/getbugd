@@ -1,3 +1,7 @@
 .DS_Store
 Thumbs.db
 *.tmp
+
+# local-only (KJ 2026-11-01): Claude Code launch config + Buglog screenshots
+.claude/launch.json
+taplog-screenshots/
