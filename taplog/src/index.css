@@ -7,6 +7,7 @@
   --rust: #8C3A0D;
   --rust-dark: #6E2D09;
   --pink: #E5197C;
+  --tile-art: #D9C08A;
   --line: rgba(30, 16, 8, 0.18);
   color-scheme: light;
 }
@@ -197,22 +198,115 @@ input:focus { border-color: var(--rust); outline: none; }
 .history-note { display: block; margin-top: 0.2rem; color: var(--cocoa-soft); overflow-wrap: anywhere; }
 .view-all { width: 100%; margin-top: 0.75rem; }
 
-/* Home: every tub as a big tap row. */
-.tub-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
-.tub-row {
-  min-height: 4.5rem;
-  padding: 0.75rem 1rem;
+/* Home: compact 3-column grid of square tub tiles, grouped by species. */
+.tub-group + .tub-group { margin-top: 1.25rem; }
+.tub-group-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cocoa-soft);
+}
+.tub-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem 0.6rem;
+}
+.tub-tile {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  background: var(--wheat-light);
-  border: 2px solid var(--line);
-  border-radius: 16px;
+  flex-direction: column;
+  gap: 0.35rem;
   color: var(--cocoa);
   text-decoration: none;
 }
-.tub-row:active { border-color: var(--rust); }
-.tub-row-name { display: block; font-weight: 700; font-size: 1.3rem; }
-.tub-row-code { display: block; margin-top: 0.15rem; font-size: 0.9rem; color: var(--cocoa-soft); }
-.chevron { font-size: 2rem; line-height: 1; color: var(--rust); }
+/* Placeholder block for Nick's species art: one muted tone for every tub. */
+.tub-tile-art {
+  display: block;
+  aspect-ratio: 1;
+  background: var(--tile-art);
+  border-radius: 14px;
+}
+.tub-tile:active .tub-tile-art { outline: 3px solid var(--rust); outline-offset: -3px; }
+.tub-tile-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+/* Tub page heading row: name, with a small Setup link on the right. */
+.tub-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.tub-head .tub-name { min-width: 0; }
+.small-link {
+  flex: none;
+  padding: 0.5rem 0;
+  color: var(--rust);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Setup page */
+.back { margin: 0 0 0.25rem; }
+.section-title { margin: 0 0 0.5rem; font-size: 1.3rem; }
+.section-date { font-weight: 400; font-size: 1rem; color: var(--cocoa-soft); }
+.hint { margin: 0 0 0.75rem; color: var(--cocoa-soft); }
+.wide { width: 100%; margin: 1rem 0; }
+.setup-current, .setup-past { margin-top: 1rem; }
+.setup-past { margin-top: 1.5rem; }
+.setup-details {
+  margin: 0;
+  padding: 0.25rem 1rem;
+  background: var(--wheat-light);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+}
+.setup-details div { display: flex; gap: 1rem; padding: 0.55rem 0; }
+.setup-details div + div { border-top: 1px solid var(--line); }
+.setup-details dt { flex: 0 0 8.5rem; color: var(--cocoa-soft); }
+.setup-details dd { margin: 0; font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.setup-past details summary { cursor: pointer; list-style: none; }
+.setup-past details summary::-webkit-details-marker { display: none; }
+.setup-past details[open] .setup-details { margin-top: 0.75rem; }
+
+.setup-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--wheat-light);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  scroll-margin: 1rem;
+}
+.setup-form:focus { outline: none; }
+.field { display: grid; gap: 0.35rem; margin: 0 0 0.9rem; padding: 0; border: none; min-width: 0; }
+.field > span, .field > legend { padding: 0; font-weight: 700; }
+.field select, .field textarea, .field input { width: 100%; }
+select, textarea {
+  font: inherit;
+  color: inherit;
+  font-size: 1rem;
+  background: var(--wheat);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+}
+select { min-height: 3rem; padding: 0 0.75rem; }
+textarea { padding: 0.65rem 0.85rem; resize: vertical; }
+select:focus, textarea:focus { border-color: var(--rust); outline: none; }
+.setup-form input { background: var(--wheat); }
+.pair { display: flex; align-items: center; gap: 0.6rem; }
+.pair input { flex: 1; min-width: 0; }
+.more-toggle { display: block; margin: 0 0 0.9rem; padding: 0.5rem 0; }
