@@ -179,6 +179,24 @@ input:focus { border-color: var(--rust); outline: none; }
   margin-top: 1rem;
 }
 
+/* History under the buttons: newest first, last five, then "View all". */
+.history { margin-top: 1.5rem; }
+.history-title { margin: 0 0 0.5rem; font-size: 1.3rem; }
+.history-empty { color: var(--cocoa-soft); }
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--wheat-light);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+}
+.history-item { padding: 0.75rem 1rem; }
+.history-item + .history-item { border-top: 1px solid var(--line); }
+.history-line { display: block; font-weight: 600; font-size: 1.05rem; }
+.history-note { display: block; margin-top: 0.2rem; color: var(--cocoa-soft); overflow-wrap: anywhere; }
+.view-all { width: 100%; margin-top: 0.75rem; }
+
 /* Home: every tub as a big tap row. */
 .tub-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
 .tub-row {

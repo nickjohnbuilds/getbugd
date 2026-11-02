@@ -90,6 +90,27 @@ function timeOf(log) {
   })
 }
 
+// "Nov 1, 1:59 PM", for the history list.
+function whenOf(log) {
+  return new Date(log.logged_at).toLocaleString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}
+
+// The columns the app reads for a log, both after saving and in the history.
+const LOG_COLUMNS = 'id, action, food_type, food_other, note, logged_at'
+
+// How many logs the history shows before "View all".
+const HISTORY_SHOWN = 5
+
+// Newest first. Two logs saved in the same moment fall back to the newer id.
+function newestFirst(a, b) {
+  return new Date(b.logged_at) - new Date(a.logged_at) || b.id - a.id
+}
+
 // Logo mark and "Buglog", top-left. Both go Home.
 function Header() {
   return (
@@ -211,7 +232,7 @@ function FoodPicker({ saving, onSave, onCancel }) {
   )
 }
 
-function LogButtons({ tubId }) {
+function LogButtons({ tubId, onSaved, onUndone }) {
   const [note, setNote] = useState('')
   const [choosingFood, setChoosingFood] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -226,7 +247,7 @@ function LogButtons({ tubId }) {
     const { data, error } = await supabase
       .from('logs')
       .insert({ tub_id: tubId, ...row, ...(trimmed && { note: trimmed }) })
-      .select('id, action, food_type, food_other, note, logged_at')
+      .select(LOG_COLUMNS)
       .single()
     setSaving(false)
     if (error) {
@@ -234,6 +255,7 @@ function LogButtons({ tubId }) {
       return
     }
     setStatus({ kind: 'saved', log: data })
+    onSaved(data)
     setChoosingFood(false)
     setNote('')
   }
@@ -245,6 +267,7 @@ function LogButtons({ tubId }) {
       setStatus({ kind: 'error', text: `Couldn't undo: ${error.message}` })
       return
     }
+    onUndone(log.id)
     // Put the note back so it isn't lost with the entry.
     if (log.note) setNote(log.note)
     setStatus({ kind: 'undone', text: `Removed ${labelFor(log)} · ${timeOf(log)}` })
@@ -321,6 +344,103 @@ function LogButtons({ tubId }) {
   )
 }
 
+// What was done to the tub and when, newest at the top. Starts with the last
+// five; "View all" loads the rest. Logs are only readable when logged in, so
+// this only shows after login.
+function History({ logs, showAll, loading, error, onViewAll }) {
+  const shown = showAll ? logs : logs.slice(0, HISTORY_SHOWN)
+  const hasMore = !showAll && logs.length > HISTORY_SHOWN
+
+  return (
+    <section className="history" aria-labelledby="history-title">
+      <h2 id="history-title" className="history-title">History</h2>
+      {error && <p role="alert" className="error">Couldn't load the history: {error}</p>}
+      {!error && logs.length === 0 && (
+        <p className="history-empty">{loading ? 'Loading…' : 'No logs yet.'}</p>
+      )}
+      {shown.length > 0 && (
+        <ol className="history-list">
+          {shown.map((log) => (
+            <li key={log.id} className="history-item">
+              <span className="history-line">{labelFor(log)} · {whenOf(log)}</span>
+              {log.note && <span className="history-note">{log.note}</span>}
+            </li>
+          ))}
+        </ol>
+      )}
+      {hasMore && (
+        <button type="button" className="secondary view-all" onClick={onViewAll} disabled={loading}>
+          {loading ? 'Loading…' : 'View all'}
+        </button>
+      )}
+    </section>
+  )
+}
+
+// The log buttons and the history under them. Holds the tub's logs, so a log
+// saved with a button shows at the top of the history right away (and leaves
+// it again on Undo) without asking the database again.
+function TubLogs({ tubId }) {
+  const [logs, setLogs] = useState([])
+  const [showAll, setShowAll] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  // Adds rows to what's already here, without doubles, newest first. A log
+  // saved while the history is still loading may come back in the load too.
+  function merge(rows) {
+    setLogs((current) => {
+      const ids = new Set(current.map((l) => l.id))
+      return [...current, ...rows.filter((r) => !ids.has(r.id))].sort(newestFirst)
+    })
+  }
+
+  // Asks for one more than it shows, to know whether "View all" is needed.
+  // `all` asks for every log for the tub. Resolves to true if it loaded.
+  function load(all) {
+    let query = supabase
+      .from('logs')
+      .select(LOG_COLUMNS)
+      .eq('tub_id', tubId)
+      .order('logged_at', { ascending: false })
+      .order('id', { ascending: false })
+    if (!all) query = query.limit(HISTORY_SHOWN + 1)
+    return query.then(({ data, error }) => {
+      setLoading(false)
+      if (error) {
+        console.error('Supabase:', error.message)
+        setError(error.message)
+        return false
+      }
+      merge(data)
+      return true
+    })
+  }
+
+  // The first five load when the page opens (`loading` starts on). The tub
+  // page makes a new TubLogs for each tub, so this runs once.
+  useEffect(() => {
+    load(false)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function viewAll() {
+    setLoading(true)
+    setError('')
+    if (await load(true)) setShowAll(true)
+  }
+
+  return (
+    <>
+      <LogButtons
+        tubId={tubId}
+        onSaved={(log) => merge([log])}
+        onUndone={(id) => setLogs((current) => current.filter((l) => l.id !== id))}
+      />
+      <History logs={logs} showAll={showAll} loading={loading} error={error} onViewAll={viewAll} />
+    </>
+  )
+}
+
 function TubPage({ code }) {
   const [tub, setTub] = useState(undefined)
   const [loadError, setLoadError] = useState('')
@@ -357,7 +477,7 @@ function TubPage({ code }) {
     <main>
       <h1 className="tub-name">{heading}</h1>
       {tub && session === null && <Login />}
-      {tub && session && <LogButtons tubId={tub.id} />}
+      {tub && session && <TubLogs tubId={tub.id} />}
     </main>
   )
 }
